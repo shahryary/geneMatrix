@@ -127,3 +127,14 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+src/bash/tmp\.conf
+
+src/__init__\.pyc
+
+src/bash/\.Rhistory
+
+src/py/__init__\.pyc
+
+.idea/*
+
+*.pyc
