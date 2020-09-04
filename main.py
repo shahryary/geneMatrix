@@ -1,33 +1,39 @@
 #
 import pandas as pd
-import sys
+import sys, time
 
 
-def matrix(minWinSize, maxWinSize):
-    main_region = []
-    original_file = []
-    tmp_pos = []
-
+def find_scope(bed_file, min_win_size, max_win_size, output):
+    extracted_region = []
     # reading bed file
-    '''
-    with open("/home/yadi/Downloads/1_final.bed")as f:
-        for line in f:
-            original_file.append(line.strip().split())
-    # convert into integer
-    #original_file = map(int, original_file)
-    original_file = [list(map(int, lst)) for lst in original_file]
-    df = pd.DataFrame(original_file)
-    '''
-    df = pd.read_csv('/home/yadi/Downloads/1_final.bed', sep="\t", header=None, names=["a", "b", "c"])
-
+    df = pd.read_csv(bed_file, sep="\t", header=None, names=["chr", "s2", "e2"])
+    # find records between the range.
+    start_time = time.time()
     for index, row in df.iterrows():
-        c = df[(df['b'] >= row[2]+minWinSize) & (df['c'] <= row[2] + maxWinSize)]
-        print(f'{c}')  # Press Ctrl+F8 to toggle the breakpoint.
-        if c.empty:
+        tmp_records = df[(df['s2'] >= row[2] + min_win_size) & (df['e2'] <= row[2] + max_win_size)]
+        if tmp_records.empty:
             sys.exit()
+        # add original regions into data-frame
+        tmp_records = tmp_records.assign(s1=row['s2'], e1=row['e2'])
+        # append into main data-frame
+        extracted_region.append(tmp_records)
+        print(f'Current record: {index+1}, out of: {len(df)}')  #
+    # concatenate data-frames
+    extracted_region = pd.concat(extracted_region)
+    # reset index
+    extracted_region = extracted_region.reset_index(drop=True)
+    # reordering columns
+    cols = extracted_region.columns.tolist()
+    cols = cols[0:1] + cols[-2:] + cols[1:3]
+    extracted_region = extracted_region[cols]
+    # write into file (csv format)
+    extracted_region.to_csv(output+".csv", sep='\t', index=False, encoding='utf-8')
+    print("Total records: ", len(extracted_region))
+    print("--- %s seconds ---" % (time.time() - start_time))
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    matrix(20000, 140000)
+    bedfile = "/home/yadi/Downloads/1_final.bed"
+    find_scope(bedfile, 20000, 140000, "matrix_Chr1")
 
