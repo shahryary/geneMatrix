@@ -44,5 +44,5 @@ if __name__ == '__main__':
     for filename in glob.glob(directory+"*.bed"):
         fname = os.path.splitext(os.path.basename(filename))[0]
         bedfile = filename
-        #find_scope(bedfile, 20000, 140000, fname)
+        find_scope(bedfile, 20000, 140000, fname)
 
