@@ -11,13 +11,12 @@ def find_scope(bed_file, min_win_size, max_win_size, output):
     start_time = time.time()
     for index, row in df.iterrows():
         tmp_records = df[(df['s2'] >= row[2] + min_win_size) & (df['e2'] <= row[2] + max_win_size)]
-        if tmp_records.empty:
-            sys.exit()
-        # add original regions into data-frame
-        tmp_records = tmp_records.assign(s1=row['s2'], e1=row['e2'])
-        # append into main data-frame
-        extracted_region.append(tmp_records)
-        print(f'Current record: {index+1}, out of: {len(df)}')  #
+        while not tmp_records.empty:
+            # add original regions into data-frame
+            tmp_records = tmp_records.assign(s1=row['s2'], e1=row['e2'])
+            # append into main data-frame
+            extracted_region.append(tmp_records)
+            print(f'Current record: {index+1}, out of: {len(df)}')
     # concatenate data-frames
     extracted_region = pd.concat(extracted_region)
     # reset index
