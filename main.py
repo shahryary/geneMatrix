@@ -1,6 +1,6 @@
 #
 import pandas as pd
-import time
+import time,os, glob
 import traceback
 import logging
 
@@ -40,6 +40,9 @@ def find_scope(bed_file, min_win_size, max_win_size, output):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    bedfile = "/home/yadi/Downloads/1_final.bed"
-    find_scope(bedfile, 20000, 140000, "matrix_Chr1")
+    directory = ''
+    for filename in glob.glob(directory+"*.bed"):
+        fname = os.path.splitext(os.path.basename(filename))[0]
+        bedfile = filename
+        #find_scope(bedfile, 20000, 140000, fname)
 
