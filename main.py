@@ -1,8 +1,8 @@
 #
 import pandas as pd
-import time,os, glob
+import time, os, glob
 import traceback
-import logging
+
 
 
 def find_scope(bed_file, min_win_size, max_win_size, output):
@@ -35,10 +35,10 @@ def find_scope(bed_file, min_win_size, max_win_size, output):
         print("Total records: ", len(extracted_region))
         print("--- %s seconds ---" % (time.time() - start_time))
     except Exception as e:
-        logging.error(traceback.format_exc())
+        print("type error: " + str(e))
+        print(traceback.format_exc())
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     directory = ''
     for filename in glob.glob(directory+"*.bed"):
