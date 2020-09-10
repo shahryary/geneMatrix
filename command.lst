@@ -1,0 +1,1 @@
+ls csvFiles/file-*.csv | parallel -j 3  --lb  python test.py {}

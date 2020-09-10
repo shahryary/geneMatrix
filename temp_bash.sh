@@ -1,1 +1,0 @@
-bedtools getfasta -fi /home/yadi/Zea_mays_B73_v4.fasta -bed temp_region.txt > extracted_region.txt
