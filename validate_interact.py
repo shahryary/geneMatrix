@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# extracting from region file
+# validate given position that predicted correctly or not.
 import os
 import numpy as np
 import time
@@ -13,24 +13,23 @@ from keras.models import load_model
 np.set_printoptions(suppress=True)
 
 import sys
-file_name = os.path.basename(os.path.splitext(sys.argv[1])[0])
-os.chdir("csvFiles/")
+
 
 def write_temp_region(chrm, s1, e1):
-    with open('temp_region-'+file_name+'.txt', 'w') as tmp_file:
+    with open('temp_region.txt', 'w') as tmp_file:
         tmp_file.write(str(chrm) + "\t" + str(s1) + "\t" + str(e1))
 
 
 def execute_shell():
-    with open('temp_bash-'+file_name+'.sh', 'w') as the_file:
+    with open('temp_bash.sh', 'w') as the_file:
         the_file.write(
-            "bedtools getfasta -fi /home/yadi/DP/geneMatrix/Zea_mays_B73_v4.fasta -bed temp_region-"+file_name+".txt > extracted_region-"+file_name+".txt")
-    subprocess.call(["sh", "./temp_bash-"+file_name+".sh"])
+            "bedtools getfasta -fi "+run_path+"Zea_mays_B73_v4.fasta -bed temp_region.txt >"+run_path+"extracted_region.txt")
+    subprocess.call(["sh", "./temp_bash.sh"])
 
 
 def matrix_fasta_regions():
     arr_matrix = np.zeros((4, 5000))  # ACGT
-    fp = open("extracted_region-"+file_name+".txt")
+    fp = open(run_path+"extracted_region.txt")
     for i, line in enumerate(fp):
         if i == 1:
             line_character_count = 0
@@ -58,26 +57,27 @@ def prediction(test1, test2):
     pred_labels = model.predict([test1, test2])
     for item in zip(pred_labels):
         if np.round(item) == 1:
-            print(item, "Item interacted")
+            #print(item, "Item interacted")
             result = 1
         else:
-            print(item)
+            #print(item)
             result = 0
 
     return (result, "%.8f"% item[0][0])
 
 
-def run_prediction(file):
+def run_prediction(csvfile):
     chunk_size = 100000
     tmp_records = []
     start_time = time.time()
     try:
-        for chunk in pd.read_csv(file, sep="\t", header=None, skiprows=1,
+        for chunk in pd.read_csv(csvfile, sep="\t", header=None, skiprows=1,
                                  chunksize=chunk_size):
 
             regions = np.array(chunk)
             print("running for chunk size: ", len(regions))
             for item in regions:
+                print(item)
                 chrm, s1, e1, s2, e2 = item[0:5]
                 # ---- making matrix for first set s1,e1
                 write_temp_region(chrm, s1, e1)
@@ -97,15 +97,18 @@ def run_prediction(file):
                 tmp_records.append([chrm, s1, e1, s2, e2, prob, result])
         df = pd.DataFrame(tmp_records, columns=['chr', 's1', 'e1', 's2', 'e2', 'prob', 'interacted'])
         df = df.reset_index(drop=True)
-        print("Writing into file ... ")
-        df.to_csv("../output/predicted-"+file_name+".csv", sep='\t', index=False, encoding='utf-8')
+        print(df)
+        #df.to_csv("../output/predicted-"+file_name+".csv", sep='\t', index=False, encoding='utf-8')
         print("--- %s seconds ---" % (time.time() - start_time))
     except Exception as e:
         print("type error: " + str(e))
         print(traceback.format_exc())
 
+run_path="/mnt/jLab/SERVER/testing/"
 
-
-model = load_model('/home/yadi/DP/geneMatrix/weights-improvement-15.hdf5')
-run_prediction(file_name+".csv")
+os.chdir(run_path)
+model = load_model('/mnt/jLab/SERVER/testing/weights-improvement-15.hdf5')
+#csv_file = sys.argv[1]
+csv_file="/mnt/jLab/SERVER/testing/test.csv"
+run_prediction(csv_file)
 

@@ -12,7 +12,7 @@ import numpy as np
 np.set_printoptions(suppress=True)
 
 # extract into text file
-# just sequnce into file
+# just sequences into file
 
 
 def write_temp_region(chrm, s1, e1):
@@ -22,7 +22,7 @@ def write_temp_region(chrm, s1, e1):
     # create shell file and extract
     with open('temp_bash.sh', 'w') as the_file:
         the_file.write(
-            "bedtools getfasta -fi Zea_mays_B73_v4.fasta -bed temp_region.txt > " + str(s1) + "_" + str(e1) + ".txt")
+            "bedtools getfasta -fi /home/yadi/DP/geneMatrix/Zea_mays_B73_v4.fasta -bed temp_region.txt > " + str(s1) + "_" + str(e1) + ".txt")
     subprocess.call(["sh", "./temp_bash.sh"])
 
 
@@ -60,4 +60,4 @@ if not os.path.exists(dir):
         print("Creation of the directory failed")
 
 os.chdir(dir)
-run_prediction("/home/yadi/1.bed")
+run_prediction("/home/yadi/geneMatrix/bedFiles/1.bed")

@@ -3,7 +3,7 @@ import pandas as pd
 import time, os, glob
 import traceback
 
-
+# make regions between windows size, export as csv file
 
 def find_scope(bed_file, min_win_size, max_win_size, output):
     extracted_region = []

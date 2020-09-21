@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# extracting from region file
+# Making h5 file from regions
 import os
 import numpy as np
 import time
@@ -8,12 +8,8 @@ import pandas as pd
 import subprocess
 import traceback
 import h5py
-
-np.set_printoptions(suppress=True)
-
 import sys
-file_name =os.path.basename(os.path.splitext(sys.argv[1])[0])
-os.chdir("csvFiles/")
+np.set_printoptions(suppress=True)
 
 def write_temp_region(chrm, s1, e1):
     with open('temp_region-'+file_name+'.txt', 'w') as tmp_file:
@@ -23,7 +19,7 @@ def write_temp_region(chrm, s1, e1):
 def execute_shell():
     with open('temp_bash-'+file_name+'.sh', 'w') as the_file:
         the_file.write(
-            "bedtools getfasta -fi /mnt/jLab/TT/Zea_mays_B73_v4.fasta -bed temp_region-"+file_name+".txt > extracted_region-"+file_name+".txt")
+            "bedtools getfasta -fi /home/yadi/DP/geneMatrix/Zea_mays_B73_v4.fasta -bed temp_region-"+file_name+".txt > extracted_region-"+file_name+".txt")
     subprocess.call(["sh", "./temp_bash-"+file_name+".sh"])
 
 
@@ -57,7 +53,7 @@ def run_prediction(file):
     # --------------------------------
     num_lines = sum(1 for line in open(file))
     # --------------------------------
-    h5_filename = "regions_matrics.h5"
+    h5_filename = "/mnt/intStorage/regions_matrics.h5"
     if not os.path.isfile(h5_filename):
         hf = h5py.File(h5_filename, 'w')
         hf.create_dataset('region_s1_e1', shape=(num_lines-1, 4, 5000), dtype="int",
@@ -100,5 +96,8 @@ def run_prediction(file):
         print(traceback.format_exc())
 
 
+
+file_name = os.path.basename(os.path.splitext(sys.argv[1])[0])
+os.chdir("csvFiles/")
 run_prediction(file_name+".csv")
 
