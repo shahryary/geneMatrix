@@ -8,7 +8,7 @@ if [ ! -d merged_csv ]; then
 fi
 #---------------
 
-for folder in */
+for folder in *f*/
 do
 
 		new_file=$(basename "$folder")
@@ -16,7 +16,7 @@ do
 		echo "merging files in folder: " $new_file
 
 		head -1 $folder/*-100000-*.csv > $folder/$new_file.csv
-		for file in $(ls -rt $folder/*)
+		for file in $(ls -rt $folder/p*)
 		do
 			echo "reading " $file
 			tail -n +2 -q $file >> $folder/$new_file.csv		
