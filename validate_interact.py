@@ -49,6 +49,7 @@ def matrix_fasta_regions():
     arr_matrix = arr_matrix.reshape((1,) + arr_matrix.shape)
     arr_matrix = arr_matrix.astype('int')
     arr_matrix = arr_matrix.transpose(0, 2, 1)
+    print(arr_matrix)
     return arr_matrix
 
 
